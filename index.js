@@ -105,7 +105,7 @@ const retryAndBackoff = async (fn, retries = 0, maxRetries = 12, base = 50) => {
   }
 }
 
-export default async function run() {
+async function run() {
   try {
     const region = core.getInput('aws-region', { required: true });
     const roleToAssume = core.getInput('role-to-assume', { required: true });
@@ -148,3 +148,5 @@ export default async function run() {
     core.setFailed(error.message);
   }
 }
+
+run();
