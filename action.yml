@@ -1,0 +1,32 @@
+name: '"Configure AWS Credentials" Action For GitHub Actions'
+description: 'Configure AWS credentials from a role to assume for use with the AWS CLI and AWS SDKs'
+inputs:
+  aws-region:
+    description: 'AWS Region, e.g. us-east-2'
+    required: true
+  role-to-assume:
+    description: >-
+      Use the provided credentials to assume an IAM role and configure the Actions
+      environment with the assumed role credentials rather than with the provided
+      credentials
+    required: true
+  role-duration-seconds:
+    description: "Role duration in seconds (default: 6 hours)"
+    required: false
+  role-session-name:
+    description: 'Role session name (default: GitHubActions)'
+    required: false
+outputs:
+  aws-account-id:
+    description: 'The AWS account ID for the provided credentials'
+  aws-region:
+    description: 'The AWS region for the provided credentials'
+  aws-access-key-id:
+    description: 'The AWS Access Key ID for the provided credentials'
+  aws-secret-access-key:
+    description: 'The AWS Secret Access Key for the provided credentials'
+  aws-session-token:
+    description: 'The AWS Session Token for the provided credentials'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
