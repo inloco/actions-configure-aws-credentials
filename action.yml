@@ -27,6 +27,8 @@ outputs:
     description: 'The AWS Secret Access Key for the provided credentials'
   aws-session-token:
     description: 'The AWS Session Token for the provided credentials'
+  aws-role-id:
+    description: 'The ID for the AWS Role assumed'
 runs:
   using: 'node12'
   main: 'dist/index.js'
