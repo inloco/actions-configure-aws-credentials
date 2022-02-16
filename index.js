@@ -130,13 +130,14 @@ async function run() {
     );
 
     const {accessKeyId, secretAccessKey, sessionToken, assumedRoleId} = roleCredentials;
+
     core.setSecret(accessKeyId);
-    core.setOutput('aws-access-key-id', accessKeyId);
     core.setSecret(secretAccessKey);
-    core.setOutput('aws-secret-access-key', secretAccessKey);
     core.setSecret(sessionToken);
+
+    core.setOutput('aws-access-key-id', accessKeyId);
+    core.setOutput('aws-secret-access-key', secretAccessKey);
     core.setOutput('aws-session-token', sessionToken);
-    core.setSecret(assumedRoleId);
     core.setOutput('aws-role-id', assumedRoleId);
 
     process.env.AWS_ACCESS_KEY_ID = accessKeyId;
