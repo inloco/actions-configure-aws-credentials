@@ -29,6 +29,8 @@ outputs:
     description: 'The AWS Session Token for the provided credentials'
   aws-role-id:
     description: 'The ID for the AWS Role assumed'
+  subject:
+    description: 'Subject of JWT from GitHub'
 runs:
   using: 'node12'
   main: 'dist/index.js'

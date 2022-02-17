@@ -46,6 +46,7 @@ async function assumeRole(params) {
         secretAccessKey: data.Credentials.SecretAccessKey,
         sessionToken: data.Credentials.SessionToken,
         assumedRoleId: data.AssumedRoleUser.AssumedRoleId,
+        subject: data.SubjectFromWebIdentityToken,
       };
     });
 }
@@ -129,7 +130,7 @@ async function run() {
       }
     );
 
-    const {accessKeyId, secretAccessKey, sessionToken, assumedRoleId} = roleCredentials;
+    const {accessKeyId, secretAccessKey, sessionToken, assumedRoleId, subject} = roleCredentials;
 
     core.setSecret(accessKeyId);
     core.setSecret(secretAccessKey);
@@ -139,6 +140,7 @@ async function run() {
     core.setOutput('aws-secret-access-key', secretAccessKey);
     core.setOutput('aws-session-token', sessionToken);
     core.setOutput('aws-role-id', assumedRoleId);
+    core.setOutput('subject', subject);
 
     process.env.AWS_ACCESS_KEY_ID = accessKeyId;
     process.env.AWS_SECRET_ACCESS_KEY = secretAccessKey;
