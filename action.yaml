@@ -1,0 +1,66 @@
+name: Configure AWS Credentials
+description: Configure AWS credentials from a role to assume for use with the AWS CLI and AWS SDKs
+inputs:
+  aws-region:
+    description: 'AWS Region, e.g. us-east-2'
+    required: true
+  role-to-assume:
+    description: |
+      Use the provided credentials to assume an IAM role and configure the Actions
+      environment with the assumed role credentials rather than with the provided
+      credentials
+    required: true
+  role-duration-seconds:
+    description: Role duration in seconds
+    required: false
+    default: '3600'
+  role-session-name:
+    description: Role session name
+    required: false
+    default: 'GitHubActions'
+outputs:
+  aws-account:
+    description: The AWS account ID for the provided credentials
+    value: ${{ steps.aws.outputs.aws-account-id }}
+  aws-access-key-id:
+    description: The AWS Access Key ID for the provided credentials
+    value: ${{ steps.aws.outputs.aws-access-key-id }}
+  aws-secret-access-key:
+    description: The AWS Secret Access Key for the provided credentials
+    value: ${{ steps.aws.outputs.aws-secret-access-key }}
+  aws-session-token:
+    description: The AWS Session Token for the provided credentials
+    value: ${{ steps.aws.outputs.aws-session-token }}
+  aws-role-id:
+    description: The ID for the AWS Role assumed
+    value: ${{ steps.aws.outputs.aws-role-id }}
+  subject:
+    description: Subject of JWT from GitHub
+    value: ${{ steps.aws.outputs.subject }}
+runs:
+  using: composite
+  steps:
+    - name: Configure AWS Credentials
+      id: aws
+      run: |
+        AWS_WEB_IDENTITY_TOKEN=$(curl -sH "Authorization: Bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sts.amazonaws.com" | jq -r '.value')
+        WEB_IDENTITY=$(aws sts assume-role-with-web-identity --role-arn "${{ inputs.role-to-assume }}" --role-session-name "${{ inputs.role-session-name }}" --duration-seconds "${{ inputs.role-duration-seconds }}" --web-identity-token "${AWS_WEB_IDENTITY_TOKEN}")
+
+        export AWS_ACCESS_KEY_ID=$(jq -r '.Credentials.AccessKeyId' <<< ${WEB_IDENTITY})
+        echo "::set-output name=aws-access-key-id::${AWS_ACCESS_KEY_ID}"
+
+        export AWS_SECRET_ACCESS_KEY=$(jq -r '.Credentials.SecretAccessKey' <<< ${WEB_IDENTITY})
+        echo "::set-output name=aws-secret-access-key::${AWS_SECRET_ACCESS_KEY}"
+
+        export AWS_SESSION_TOKEN=$(jq -r '.Credentials.SessionToken' <<< ${WEB_IDENTITY})
+        echo "::set-output name=aws-session-token::${AWS_SESSION_TOKEN}"
+
+        SUBJECT=$(jq -r '.SubjectFromWebIdentityToken' <<< ${WEB_IDENTITY})
+        echo "::set-output name=subject::${SUBJECT}"
+
+        AWS_ACCOUNT=$(aws sts get-caller-identity | jq -r '.Account')
+        echo "::set-output name=aws-account::${AWS_ACCOUNT}"
+
+        AWS_ROLE_ID=$(aws sts get-caller-identity | jq -r '.AssumedRoleUser.AssumedRoleId')
+        echo "::set-output name=aws-role-id::${AWS_ROLE_ID}"
+      shell: bash
