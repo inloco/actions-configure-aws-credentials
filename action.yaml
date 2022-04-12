@@ -40,6 +40,14 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: 'Check if permission "id-token: write" is set'
+      run: |
+        if [[ -z ${ACTIONS_ID_TOKEN_REQUEST_URL} || -z ${ACTIONS_ID_TOKEN_REQUEST_TOKEN} ]]
+        then
+          echo 'Action must have permission "id-token: write"'
+          exit 1
+        fi
+      shell: bash
     - name: Configure AWS Credentials
       id: aws
       run: |
