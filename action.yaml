@@ -61,6 +61,6 @@ runs:
         AWS_ACCOUNT=$(aws sts get-caller-identity | jq -r '.Account')
         echo "::set-output name=aws-account::${AWS_ACCOUNT}"
 
-        AWS_ROLE_ID=$(aws sts get-caller-identity | jq -r '.AssumedRoleUser.AssumedRoleId')
+        AWS_ROLE_ID=$(jq -r '.AssumedRoleUser.AssumedRoleId' <<< ${WEB_IDENTITY})
         echo "::set-output name=aws-role-id::${AWS_ROLE_ID}"
       shell: bash
