@@ -3,6 +3,8 @@
 ## Example
 
 ```yaml
+permissions:
+  id-token: write # required
 jobs:
   example:
     steps:
