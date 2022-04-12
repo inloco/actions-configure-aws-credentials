@@ -13,7 +13,7 @@ inputs:
   role-duration-seconds:
     description: Role duration in seconds
     required: false
-    default: '3600'
+    default: '900'
   role-session-name:
     description: Role session name
     required: false
@@ -58,9 +58,11 @@ runs:
         echo "::set-output name=aws-access-key-id::${AWS_ACCESS_KEY_ID}"
 
         export AWS_SECRET_ACCESS_KEY=$(jq -r '.Credentials.SecretAccessKey' <<< ${WEB_IDENTITY})
+        echo "::add-mask::${AWS_SECRET_ACCESS_KEY}" 
         echo "::set-output name=aws-secret-access-key::${AWS_SECRET_ACCESS_KEY}"
 
         export AWS_SESSION_TOKEN=$(jq -r '.Credentials.SessionToken' <<< ${WEB_IDENTITY})
+        echo "::add-mask::${AWS_SESSION_TOKEN}" 
         echo "::set-output name=aws-session-token::${AWS_SESSION_TOKEN}"
 
         SUBJECT=$(jq -r '.SubjectFromWebIdentityToken' <<< ${WEB_IDENTITY})
