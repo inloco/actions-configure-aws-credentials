@@ -1,2 +1,1 @@
-actions-configure-aws-credentials
-===
+# Configure AWS Credentials Action
